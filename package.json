@@ -1,6 +1,6 @@
 {
   "name": "react-native-localstorage-polyfill",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Adds polyfill for localstorage using async storage",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
