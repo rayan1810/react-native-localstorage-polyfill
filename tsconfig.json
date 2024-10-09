@@ -2,14 +2,19 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "react-native-localstorage-polyfill": ["./src/index"]
+      "react-native-localstorage-polyfill": [
+        "./src/index"
+      ]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": true,

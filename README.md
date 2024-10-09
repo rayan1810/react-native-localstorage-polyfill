@@ -10,15 +10,17 @@ npm install react-native-localstorage-polyfill
 
 ## Usage
 
+Simply import react-native-localstorage-polyfill in the root of your app
 
 ```js
-import { multiply } from 'react-native-localstorage-polyfill';
-
-// ...
-
-const result = await multiply(3, 7);
+import 'react-native-localstorage-polyfill';
 ```
 
+```js
+localStorage.setItem('key', 'value');
+
+localStorage.getItem('key');
+```
 
 ## Contributing
 
@@ -27,7 +29,3 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 ## License
 
 MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
