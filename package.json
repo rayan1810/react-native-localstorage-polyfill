@@ -1,7 +1,7 @@
 {
   "name": "react-native-localstorage-polyfill",
   "version": "0.1.1",
-  "description": "Adds polyfill for localstorage using async storage",
+  "description": "Adds polyfill for localstorage using async storage or MMKV",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -14,6 +14,16 @@
       "require": {
         "types": "./lib/typescript/commonjs/src/index.d.ts",
         "default": "./lib/commonjs/index.js"
+      }
+    },
+    "./mmkv": {
+      "import": {
+        "types": "./lib/typescript/module/src/backends/MMKVBackend.d.ts",
+        "default": "./lib/module/backends/MMKVBackend.js"
+      },
+      "require": {
+        "types": "./lib/typescript/commonjs/src/backends/MMKVBackend.d.ts",
+        "default": "./lib/commonjs/backends/MMKVBackend.js"
       }
     }
   },
@@ -47,7 +57,10 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "localstorage",
+    "async-storage",
+    "mmkv"
   ],
   "repository": {
     "type": "git",
@@ -87,7 +100,17 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "@react-native-async-storage/async-storage": ">=1.0.0",
+    "react-native-mmkv": ">=2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    },
+    "react-native-mmkv": {
+      "optional": true
+    }
   },
   "workspaces": [
     "example"
@@ -181,8 +204,5 @@
   "create-react-native-library": {
     "type": "library",
     "version": "0.41.2"
-  },
-  "dependencies": {
-    "@react-native-async-storage/async-storage": "^2.0.0"
   }
 }

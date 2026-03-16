@@ -1,4 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { StorageBackend } from './backends/types';
+import { AsyncStorageBackend } from './backends/AsyncStorageBackend';
 
 type KeyType = string;
 
@@ -7,32 +8,44 @@ class SyncStorage {
 
   loading: boolean = true;
 
-  init(): Promise<Array<any>> {
-    return AsyncStorage.getAllKeys().then((keys: any) =>
-      AsyncStorage.multiGet(keys).then((data: any): Array<any> => {
-        data.forEach(this.saveItem.bind(this));
+  private backend: StorageBackend | null = null;
 
+  setBackend(backend: StorageBackend) {
+    this.backend = backend;
+  }
+
+  private getBackend(): StorageBackend {
+    if (!this.backend) {
+      this.backend = new AsyncStorageBackend();
+    }
+    return this.backend;
+  }
+
+  init(): Promise<Array<any>> {
+    return this.getBackend()
+      .init()
+      .then((data) => {
+        data.forEach((item) => this.saveItem(item));
         return [...this.data];
-      })
-    );
+      });
   }
 
   getItem(key: KeyType): any {
     return this.data.get(key);
   }
 
-  setItem(key: KeyType, value: any): Promise<any> {
+  setItem(key: KeyType, value: any): Promise<any> | void {
     if (!key) return Promise.resolve('error a key is not provided');
 
     this.data.set(key, value);
-    return AsyncStorage.setItem(key, JSON.stringify(value));
+    return this.getBackend().setItem(key, JSON.stringify(value));
   }
 
-  removeItem(key: KeyType): Promise<any> {
+  removeItem(key: KeyType): Promise<any> | void {
     if (!key) return Promise.resolve('error a key is not provided');
 
     this.data.delete(key);
-    return AsyncStorage.removeItem(key);
+    return this.getBackend().removeItem(key);
   }
 
   saveItem(item: Array<KeyType>) {
@@ -53,9 +66,9 @@ class SyncStorage {
     return Array.from(this.data.keys());
   }
 
-  clear(): Promise<void> {
+  clear(): Promise<void> | void {
     this.data.clear();
-    return AsyncStorage.clear();
+    return this.getBackend().clear();
   }
 }
 
