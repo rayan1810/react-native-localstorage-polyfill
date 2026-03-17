@@ -1,6 +1,6 @@
 # react-native-localstorage-polyfill
 
-Adds polyfill for localstorage using async storage
+Adds polyfill for localstorage using AsyncStorage or MMKV
 
 ## Installation
 
@@ -10,8 +10,18 @@ npm install react-native-localstorage-polyfill
 
 ### Install peer dependencies
 
+Choose one (or both, if migrating):
+
+**AsyncStorage (default):**
+
 ```sh
 npm install @react-native-async-storage/async-storage
+```
+
+**MMKV (faster, synchronous):**
+
+```sh
+npm install react-native-mmkv
 ```
 
 ### Linking
@@ -30,7 +40,9 @@ react-native link @react-native-async-storage/async-storage
 
 ## Usage
 
-Simply import react-native-localstorage-polyfill in the root of your app
+### With AsyncStorage (default)
+
+Simply import react-native-localstorage-polyfill in the root of your app:
 
 ```js
 import 'react-native-localstorage-polyfill';
@@ -40,6 +52,96 @@ import 'react-native-localstorage-polyfill';
 localStorage.setItem('key', 'value');
 
 localStorage.getItem('key');
+```
+
+### With MMKV
+
+```js
+import 'react-native-localstorage-polyfill';
+import { configure } from 'react-native-localstorage-polyfill';
+import { MMKVBackend } from 'react-native-localstorage-polyfill/mmkv';
+
+configure({ backend: new MMKVBackend() });
+await localStorage.init();
+
+localStorage.setItem('key', 'value');
+localStorage.getItem('key');
+```
+
+#### Custom MMKV instance
+
+You can pass your own MMKV instance for encryption or custom storage IDs:
+
+```js
+import { MMKV } from 'react-native-mmkv';
+import { configure } from 'react-native-localstorage-polyfill';
+import { MMKVBackend } from 'react-native-localstorage-polyfill/mmkv';
+
+const mmkv = new MMKV({
+  id: 'my-app-storage',
+  encryptionKey: 'my-secret-key',
+});
+
+configure({ backend: new MMKVBackend(mmkv) });
+```
+
+## Migrating from AsyncStorage to MMKV
+
+If you're already using this library with AsyncStorage and want to switch to MMKV, use the built-in migration utility:
+
+```js
+import { configure, migrateStorage, AsyncStorageBackend } from 'react-native-localstorage-polyfill';
+import { MMKVBackend } from 'react-native-localstorage-polyfill/mmkv';
+
+async function setupStorage() {
+  const mmkvBackend = new MMKVBackend();
+
+  // Migrate all data from AsyncStorage to MMKV (run once)
+  await migrateStorage({
+    from: new AsyncStorageBackend(),
+    to: mmkvBackend,
+    deleteAfterMigration: true, // clears AsyncStorage after migration
+  });
+
+  // Use MMKV going forward
+  configure({ backend: mmkvBackend });
+  await localStorage.init();
+}
+```
+
+After confirming the migration is successful, you can optionally uninstall `@react-native-async-storage/async-storage`.
+
+## API
+
+### `configure({ backend })`
+
+Set the storage backend. Must be called before `localStorage.init()`.
+
+### `migrateStorage({ from, to, deleteAfterMigration? })`
+
+Migrates all data from one backend to another. Returns `{ migratedKeys: number }`.
+
+### `AsyncStorageBackend`
+
+Storage backend using `@react-native-async-storage/async-storage`.
+
+### `MMKVBackend`
+
+Storage backend using `react-native-mmkv`. Import from `react-native-localstorage-polyfill/mmkv`.
+
+Constructor: `new MMKVBackend(mmkvInstance?)` — optionally accepts a custom MMKV instance.
+
+### `StorageBackend` (type)
+
+Interface for implementing custom storage backends:
+
+```ts
+interface StorageBackend {
+  init(): Promise<[string, any][]>;
+  setItem(key: string, value: string): void | Promise<void>;
+  removeItem(key: string): void | Promise<void>;
+  clear(): void | Promise<void>;
+}
 ```
 
 ## Contributing
