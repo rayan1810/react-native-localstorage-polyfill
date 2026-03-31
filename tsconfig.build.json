@@ -1,7 +1,11 @@
 {
   "extends": "./tsconfig",
   "compilerOptions": {
-    "typeRoots": ["./typings", "./node_modules/@types"]
+    "paths": {
+      "react-native-localstorage-polyfill": ["./src/index"],
+      "react-native-mmkv": ["./typings/react-native-mmkv"],
+      "@react-native-async-storage/async-storage": ["./typings/@react-native-async-storage/async-storage"]
+    }
   },
   "exclude": ["example", "lib", "src/__tests__", "src/__mocks__"]
 }
