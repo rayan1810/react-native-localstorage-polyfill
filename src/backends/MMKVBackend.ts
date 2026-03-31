@@ -1,11 +1,11 @@
-import { MMKV } from 'react-native-mmkv';
+import { createMMKV, type MMKV } from 'react-native-mmkv';
 import type { StorageBackend } from './types';
 
 export class MMKVBackend implements StorageBackend {
   private mmkv: MMKV;
 
   constructor(mmkvInstance?: MMKV) {
-    this.mmkv = mmkvInstance ?? new MMKV();
+    this.mmkv = mmkvInstance ?? createMMKV();
   }
 
   async init(): Promise<[string, any][]> {
@@ -18,7 +18,7 @@ export class MMKVBackend implements StorageBackend {
   }
 
   removeItem(key: string): void {
-    this.mmkv.delete(key);
+    this.mmkv.remove(key);
   }
 
   clear(): void {

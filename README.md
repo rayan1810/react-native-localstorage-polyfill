@@ -24,6 +24,8 @@ npm install @react-native-async-storage/async-storage
 npm install react-native-mmkv
 ```
 
+> **MMKV v4+** uses Nitro modules under the hood. Make sure `react-native-nitro-modules` is installed (it comes as a peer dependency of `react-native-mmkv` v4). Both MMKV v2/v3 and v4 are supported.
+
 ### Linking
 
 #### React Native 0.60 and above
@@ -73,17 +75,19 @@ localStorage.getItem('key');
 You can pass your own MMKV instance for encryption or custom storage IDs:
 
 ```js
-import { MMKV } from 'react-native-mmkv';
+import { createMMKV } from 'react-native-mmkv';
 import { configure } from 'react-native-localstorage-polyfill';
 import { MMKVBackend } from 'react-native-localstorage-polyfill/mmkv';
 
-const mmkv = new MMKV({
+const mmkv = createMMKV({
   id: 'my-app-storage',
   encryptionKey: 'my-secret-key',
 });
 
 configure({ backend: new MMKVBackend(mmkv) });
 ```
+
+> **Note:** MMKV v2/v3 used `new MMKV(...)`, while v4+ uses `createMMKV(...)`. This library supports both — just pass the instance you create.
 
 ## Migrating from AsyncStorage to MMKV
 
@@ -129,7 +133,7 @@ Storage backend using `@react-native-async-storage/async-storage`.
 
 Storage backend using `react-native-mmkv`. Import from `react-native-localstorage-polyfill/mmkv`.
 
-Constructor: `new MMKVBackend(mmkvInstance?)` — optionally accepts a custom MMKV instance.
+Constructor: `new MMKVBackend(mmkvInstance?)` — optionally accepts a pre-created MMKV instance (from `createMMKV()` in v4+ or `new MMKV()` in v2/v3).
 
 ### `StorageBackend` (type)
 
