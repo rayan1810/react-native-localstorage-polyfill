@@ -1,6 +1,6 @@
+import { createMMKV } from 'react-native-mmkv';
 import { MMKVBackend } from '../backends/MMKVBackend';
 
-// Mock react-native-mmkv v4 API
 const mockStore = new Map<string, string>();
 
 const mockMMKVInstance = {
@@ -11,9 +11,8 @@ const mockMMKVInstance = {
   clearAll: jest.fn(() => mockStore.clear()),
 };
 
-jest.mock('react-native-mmkv', () => ({
-  createMMKV: jest.fn(() => mockMMKVInstance),
-}));
+// Override the manual mock's createMMKV to return our controlled instance
+(createMMKV as jest.Mock).mockReturnValue(mockMMKVInstance);
 
 describe('MMKVBackend', () => {
   let backend: MMKVBackend;
@@ -21,17 +20,16 @@ describe('MMKVBackend', () => {
   beforeEach(() => {
     mockStore.clear();
     jest.clearAllMocks();
+    (createMMKV as jest.Mock).mockReturnValue(mockMMKVInstance);
     backend = new MMKVBackend();
   });
 
   it('creates an MMKV instance via createMMKV when no instance provided', () => {
-    const { createMMKV } = require('react-native-mmkv');
     expect(createMMKV).toHaveBeenCalled();
   });
 
   it('uses a provided MMKV instance instead of creating one', () => {
-    const { createMMKV } = require('react-native-mmkv');
-    createMMKV.mockClear();
+    (createMMKV as jest.Mock).mockClear();
 
     const customInstance = { ...mockMMKVInstance } as any;
     const customBackend = new MMKVBackend(customInstance);

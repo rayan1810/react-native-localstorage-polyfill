@@ -121,7 +121,10 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^react-native-mmkv$": "<rootDir>/src/__mocks__/react-native-mmkv.ts"
+    }
   },
   "commitlint": {
     "extends": [
