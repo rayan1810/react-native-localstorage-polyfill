@@ -1,4 +1,7 @@
 {
   "extends": "./tsconfig",
-  "exclude": ["example", "lib"]
+  "compilerOptions": {
+    "typeRoots": ["./typings", "./node_modules/@types"]
+  },
+  "exclude": ["example", "lib", "src/__tests__", "src/__mocks__"]
 }
